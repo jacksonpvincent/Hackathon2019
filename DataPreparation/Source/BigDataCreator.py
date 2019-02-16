@@ -77,7 +77,7 @@ class DataTrendGen(object):
 class DataPusher():
         
     def SendJsonDataToServer(self, logTime, lTLeft, lTRight, rTLeft, rTRight):
-        sleep(5)
+        sleep(0.0025)
         timepoints=[];
         taperTempL1={}
         taperTempL1["name"] = "LeftTaperLeftTemp"
@@ -115,19 +115,12 @@ class DataPusher():
         taperTempR2["tags"]["status"]="OPEN"
         timepoints.append(taperTempR2)
         
-        taperTempRul={}
-        taperTempRul["name"] = "RUL"
-        taperTempRul["value"] = 3
-        taperTempRul["timestamp"] = int(time.time()*1000)
-        taperTempRul["tags"]={}
-        taperTempRul["tags"]["banking"]="True"
-        taperTempRul["tags"]["status"]="OPEN"
-        timepoints.append(taperTempRul)
-        
         print ("Bulk ready.");
         print (json.dumps(timepoints));
-        r = requests.post("http://localhost:8083/api/v1/datapoints", data=json.dumps(timepoints))
-        #r = requests.post("http://kairosdb:8083/api/v1/datapoints", data={"TimeStamp":int(time.time()*1000),"LeftTaperLeftTemp":lTLeft,"LeftTaperRightTemp":lTRight,"RightTaperLeftTemp":rTLeft,"RightTaperRightTemp":rTRight})
+        # Direct to Kairosdb
+#         r = requests.post("http://localhost:8083/api/v1/datapoints", data=json.dumps(timepoints))
+        # To Prediction server
+        r = requests.post("http://localhost:5000", data=json.dumps(timepoints))
         print(r.status_code, r.reason)
         print ("Bulk gone.")
         
